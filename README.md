@@ -4,7 +4,7 @@
            ;,;kak*MWW#*#MW%%@%%%WW#oa:
           ;,,ah#W%%W*hkkhooo*MW%%%W#k*h                     angel@bohorquez05 ----------------------------------
           ,:a*M%%M*ha+======+ah*M%%%#k%#,                   . OS: ................................... Windows 11
-           +oW%Moa+===========++k*MWW##@M:                  . Uptime: ............... 24 years, 6 months, 5 days
+           +oW%Moa+===========++k*MWW##@M:                  . Uptime: ............... 24 years, 6 months, 6 days
           .aM%#+;;===============+hMWW#M@M,                 . Host: ............................... Milan, Italy
           .hWW+,,:;============;===kW%W#M@*                 . IDE: ..................................... VS Code
           ;hMo..,:;==========++++=;;+*%WW@%+
