@@ -13,7 +13,7 @@ from datetime import date
 
 USER = "angelbohorquez05"
 BIRTHDAY = date(2002, 1, 13)
-STAT_W = 52  # ancho de la columna de stats
+STAT_W = 100  # ancho total de la ficha (los puntos rellenan hasta aqui)
 
 
 def uptime():
