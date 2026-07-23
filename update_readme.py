@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Regenera README.md: arte ASCII + ficha neofetch con datos en vivo.
+"""Regenera README.md: ficha neofetch con datos en vivo.
 
 Corre localmente (python update_readme.py) o via GitHub Actions (diario).
 Regla: las stats con valor 0 o desconocido NO se muestran.
@@ -13,7 +13,6 @@ from datetime import date
 
 USER = "angelbohorquez05"
 BIRTHDAY = date(2002, 1, 13)
-ART_W = 60   # ancho de la columna de arte
 STAT_W = 52  # ancho de la columna de stats
 
 
@@ -99,7 +98,6 @@ def cont_line(value):
 
 
 def main():
-    art = open("ascii.txt", encoding="utf-8").read().splitlines()
     g = github_stats()
 
     stats = []
@@ -132,16 +130,8 @@ def main():
     if g["loc"]:
         stats.append(dotline("Lines of code", g["loc"]))
 
-    total = max(len(art), len(stats))
-    pad_top = (len(art) - len(stats)) // 2 if len(art) > len(stats) else 0
-    merged = []
-    for i in range(total):
-        left = art[i] if i < len(art) else ""
-        j = i - pad_top
-        right = stats[j] if 0 <= j < len(stats) else ""
-        merged.append(f"{left:<{ART_W}}{right}".rstrip())
-
-    readme = "```text\n" + "\n".join(merged) + "\n```\n"
+    body = "\n".join(line.rstrip() for line in stats)
+    readme = "```text\n" + body + "\n```\n"
     with open("README.md", "w", encoding="utf-8", newline="\n") as f:
         f.write(readme)
     print("README.md regenerado")
