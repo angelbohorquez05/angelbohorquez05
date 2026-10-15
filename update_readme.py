@@ -50,7 +50,8 @@ def api(url, retries=3):
 
 def github_stats():
     """Devuelve dict de stats; las que fallen quedan en None."""
-    s = {"repos": None, "commits": None, "loc": None, "joined": None}
+    s = {"repos": None, "commits": None, "loc": None, "joined": None,
+         "stars": None, "prs": None, "issues": None, "contributed_to": None}
     try:
         u = api(f"https://api.github.com/users/{USER}")
         s["repos"] = u.get("public_repos")
@@ -69,7 +70,10 @@ def github_stats():
         own = [r["name"] for r in repos if not r.get("fork")]
         # lineas de codigo: sumas de additions - deletions del propio user
         added = deleted = 0
+        stars = 0
+        contributed_repos = set()
         for name in own:
+            stars += api(f"https://api.github.com/repos/{USER}/{name}").get("stargazers_count", 0)
             stats = api(
                 f"https://api.github.com/repos/{USER}/{name}/stats/contributors")
             if not stats:
@@ -81,8 +85,34 @@ def github_stats():
                         deleted += wk.get("d", 0)
         if added:
             s["loc"] = f"{added - deleted:,} ( {added:,}++, {deleted:,}-- )"
+        if stars:
+            s["stars"] = stars
     except Exception as e:
-        print(f"aviso: repos/LOC no disponibles ({e})")
+        print(f"aviso: repos/LOC/stars no disponibles ({e})")
+
+    try:
+        prs = api(f"https://api.github.com/search/issues?q=type:pr+author:{USER}")
+        s["prs"] = prs.get("total_count")
+    except Exception as e:
+        print(f"aviso: PRs no disponibles ({e})")
+
+    try:
+        issues = api(f"https://api.github.com/search/issues?q=type:issue+author:{USER}")
+        s["issues"] = issues.get("total_count")
+    except Exception as e:
+        print(f"aviso: issues no disponibles ({e})")
+
+    try:
+        repos = api(f"https://api.github.com/users/{USER}/repos?per_page=100&type=all")
+        contributed = 0
+        for r in repos:
+            if r.get("fork"):
+                contributed += 1
+        if contributed:
+            s["contributed_to"] = contributed
+    except Exception as e:
+        print(f"aviso: contributed_to no disponible ({e})")
+
     return s
 
 
@@ -125,8 +155,16 @@ def main():
         stats.append(dotline("Member since", g["joined"]))
     if g["repos"]:
         stats.append(dotline("Repos", str(g["repos"])))
+    if g["stars"]:
+        stats.append(dotline("Total stars", str(g["stars"])))
     if g["commits"]:
         stats.append(dotline("Commits", f"{g['commits']:,}"))
+    if g["prs"]:
+        stats.append(dotline("Total PRs", str(g["prs"])))
+    if g["issues"]:
+        stats.append(dotline("Total issues", str(g["issues"])))
+    if g["contributed_to"]:
+        stats.append(dotline("Contributed to", str(g["contributed_to"])))
     if g["loc"]:
         stats.append(dotline("Lines of code", g["loc"]))
 
